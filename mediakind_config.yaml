@@ -1,15 +1,17 @@
 imports:
 - path: mediakind_core_vm.jinja
 imports:
-- path: percona-cluster_schema.jinja
+- path: percona_cluster_schema.jinja
 imports:
 - path: mediakind_role.yml
+imports:
+- path: mediakind_role.jinja
 imports:
 - path: service_account.jinja
 
 resources:
 # Create the auto-mode network
-- name: mkgcpnetworks
+- name: mediakind-networks
   type: compute.v1.network
   properties:
     autoCreateSubnetworks: true
@@ -47,18 +49,18 @@ resources:
 - name: mediakind_core_vm_template
   type: mediakind_core_vm.jinja
   properties:
-    zone: europe-west1-d
+    zone: europe-west1-b
     machineType: n1-highmem-2
-    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["development-mkgcp"] }}/global/networks/mediakind-networks
+    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
     subnetwork: regions/europe-west-1/subnetworks/mediakind-networks
 
 # Create the percona-cluster-db-moogsoft instance
 - name: percona-cluster-db-moogsoft
-  type: percona-cluster-db-schema.jinja
+  type: percona_cluster_schema.jinja
   properties:
-    zone: europe-west1-d
+    zone: europe-west1-b
     machineType: n1-standard-1
-    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["development-mkgcp"] }}/global/networks/mediakind-networks  
+    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks  
     subnetwork: regions/europe-west1/subnetworks/mediakind-networks
 
 
