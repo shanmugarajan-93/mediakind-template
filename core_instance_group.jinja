@@ -1,0 +1,44 @@
+#Create lam3 instance group
+
+resources:
+- name: 'lam3-group-{{ env["development-mediakind"] }}'
+  type: compute.v1.regionInstanceGroupManager
+  properties:
+    baseInstanceName: core-vm-template-{{ env["development-mediakind"] }}
+    instanceTemplate: '$(ref.{{ env["development-mediakind"] }}-mediakind_core_vm.selfLink)'
+    targetSize: 1
+    region: europe-west1-d
+
+- name: 'autoscaler-{{ env["development-mediakind"] }}'
+  type: compute.v1.regionAutoscalers
+  properties:
+    autoscalingPolicy:
+      coolDownPeriodSec: 60
+      loadBalancingUtilization:
+        utilizationTarget: 50
+      maxNumReplicas: 3
+      minNumReplicas: 2
+    target: $(ref.instance-group-{{ env["development-mediakind"] }}.selfLink)
+    region: europe-west1-d
+    
+#Create lam4 instance group
+resources:
+- name: 'lam4-group-{{ env["development-mediakind"] }}'
+  type: compute.v1.regionInstanceGroupManager
+  properties:
+    baseInstanceName: core-vm-template-{{ env["development-mediakind"] }}
+    instanceTemplate: '$(ref.{{ env["development-mediakind"] }}-mediakind_core_vm.selfLink)'
+    targetSize: 1
+    region: europe-west1-d
+
+- name: 'autoscaler-{{ env["development-mediakind"] }}'
+  type: compute.v1.regionAutoscalers
+  properties:
+    autoscalingPolicy:
+      coolDownPeriodSec: 60
+      loadBalancingUtilization:
+        utilizationTarget: 50
+      maxNumReplicas: 3
+      minNumReplicas: 2
+    target: $(ref.instance-group-{{ env["development-mediakind"] }}.selfLink)
+    region: europe-west1-d
