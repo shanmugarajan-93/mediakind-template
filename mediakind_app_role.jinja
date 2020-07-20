@@ -1,0 +1,36 @@
+#Create the mediakind-app-role
+ resources:
+- name:  MediaKindProject
+  type: gcp-types/iam-v1:development-mediakind.admin
+  properties:
+    parent: projects/{{ env["MediaKindProject"] }}
+    roleId: {{ properties["mediakindadmin/compute.admin"] }}
+    role:
+      title: {{ properties["MediakindAdmin"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}
+
+  resources:
+- name: MediakindNetworkAdmin
+  type: gcp-types/iam-v1:development-mediakind.networkadmin
+  properties:
+    parent: projects/{{ env["MediakindProject"] }}
+    roleId: {{ properties["mediakindnetwork/compute.networkadmin"] }}
+    role:
+      title: {{ properties["MediakindNetworkAdmin"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}
+
+  resources:
+- name: MediakindApps
+  type: gcp-types/iam-v1:development-mediakinduser.instanceadmin
+  properties:
+    parent: projects/{{ env["MediakindProject"] }}
+    roleId: {{ properties["mediakinduser/compute.instanceAdmin.v1"] }}
+    role:
+      title: {{ properties["MediakindApps"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}

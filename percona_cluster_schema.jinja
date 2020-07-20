@@ -1,0 +1,148 @@
+{#
+Copyright 2016 Google Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% set NAME_PREFIX = env['MediakindProject'] + '-' + env['MediakindApp'] %}
+
+resources:
+- type: compute.v1.instanceTemplate
+  name: percona-XtraDB-template
+  properties:
+    zone: {{ properties["gcloud compute mediakindApps add-metadata \
+    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b"] }}
+    machineType: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/zones/{{ properties["gcloud compute mediakindApps add-metadata \
+    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b"] }}/machineTypes/n1-standard-1
+     tags:
+        items:
+        - network-tags
+        - https-server
+    disks:
+    - deviceName: SSD-Provisioned Space
+      type: SSD
+      boot: true
+      mode: 'READ_WRITE'
+      autoDelete: true
+      initializeParams:
+        diskName: {{ Database-disk }}-disk
+        sourceImage: https://www.googleapis.com/compute/v1/mediakind/debian-cloud/global/images/family/debian-7
+         diskSizeGb: '500'
+    networkInterfaces:
+    - network: projects/mediakind/global/networks/mediakind-network
+      subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
+    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b/subnetworks/mediakind-subnet
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+        aliasIpRanges: []
+    labels: { environment: {{ env["MediakindProject"] }}, tenancy: "mediakind-subnet" }
+      scheduling:
+        preemptible: false
+        onHostMaintenance: MIGRATE
+        automaticRestart: true
+        nodeAffinities: []
+
+
+    metadata:
+      items:
+      # For more ways to use startup scripts on an instance, see:
+      #   https://cloud.google.com/compute/docs/startupscript
+      - key: startup-script
+        value: |
+          #!/bin/bash
+          wget install update
+          wget install https://raw.githubusercontent.com/Percona-QA/percona-qa/master/pxc-tests/pxc-startup.sh
+          wget install https://www.percona.com/redir/downloads/TESTING/Percona-XtraDB-Cluster-8.0/centos7/Percona-XtraDB-Cluster_8.0.15.5-27dev.4.2_Linux.x86_64.ssl102.tar.gz
+          wget install pip
+          cd Percona-XtraDB-Cluster_8.0.15.5-27dev.4.2_Linux.x86_64.ssl102/
+          bash ../pxc-startup.sh
+          ./start_pxc
+          ./start_pxc will create ./stop_pxc | ./*node_cli | ./wipe scripts
+          ./start_pxc 3
+          ls -1 *_node_cli wipe *_pxc
+          {{ properties["startup-script"]|indent(11) }}
+
+      labels:
+    - key: percona-monitor
+      value: db monitor  
+    - key: network-tags
+      value: mediakind network
+
+  serviceAccounts:
+    - email: mkappuser@gmail.com
+      scopes:
+      - https://www.googleapis.com/auth/devstorage.read_only
+      - https://www.googleapis.com/auth/logging.write
+      - https://www.googleapis.com/auth/monitoring.write
+      - https://www.googleapis.com/auth/servicecontrol
+      - https://www.googleapis.com/auth/service.management.readonly
+      - https://www.googleapis.com/auth/trace.append
+
+  - type: compute.v1.firewall
+  name: allow-http-pmm-server
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - tcp
+    allowed:
+    - IPProtocol: tcp
+      ports: 
+      - '80'
+    sourceRanges: 
+    - 198.164.54.35/26
+  name: default-allow-icmp
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - icmp
+    allowed:
+    - IPProtocol: icmp
+      ports: 
+      - '65534'
+    sourceRanges: 
+    - 194.162.82.65/24
+  name: default-allow-internal
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - ssh
+    allowed:
+    - IPProtocol: tcp,udp,icmp
+      ports: 
+      - '0-65535'
+    sourceRanges: 
+    - 192.161.78.48/26
+  name: default-allow-rdp
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - tcp
+    allowed:
+    - IPProtocol: tcp
+      ports: 
+      - '3389'
+    sourceRanges: 
+    - 192.164.86.68/20
+  name: default-allow-ssh
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - ssh
+    allowed:
+    - IPProtocol: tcp
+      ports: 
+      - '20-22'
+    sourceRanges: 
+    - 191.166.56.64/20
+

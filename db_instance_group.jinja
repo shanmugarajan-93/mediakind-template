@@ -1,0 +1,64 @@
+# Create percona cluster instance group
+
+resources:
+- name: 'percona-node1-{{ env["MediakindOrganization"] }}'
+  type: compute.v1.regionInstanceGroupManager
+  properties:
+    baseInstanceName: percona-db-template-{{ env["MediakindOrganization"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindOrganization"] }}-percona_cluster_schema.selfLink)'
+    targetSize: 2
+    region: europe-west1-b
+
+- name: 'autoscaler-{{ env["MediakindOrgAdmin"] }}'
+  type: compute.v1.regionAutoscalers
+  properties:
+    autoscalingPolicy:
+      coolDownPeriodSec: 50
+      loadBalancingUtilization:
+        utilizationTarget: 80
+      maxNumReplicas: 5
+      minNumReplicas: 3
+    target: $(ref.instance-group-{{ env["MediakindOrganization"] }}.selfLink)
+    region: europe-west1-b
+
+resources:
+- name: 'percona-node2-{{ env["MediakindOrganization"] }}'
+  type: compute.v1.regionInstanceGroupManager
+  properties:
+    baseInstanceName: percona-db-template-{{ env["MediakindOrganization"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindOrganization"] }}-percona_cluster_schema.selfLink)'
+    targetSize: 2
+    region: europe-west1-b
+
+- name: 'autoscaler-{{ env["MediakindOrgAdmin"] }}'
+  type: compute.v1.regionAutoscalers
+  properties:
+    autoscalingPolicy:
+      coolDownPeriodSec: 50
+      loadBalancingUtilization:
+        utilizationTarget: 80
+      maxNumReplicas: 5
+      minNumReplicas: 3
+    target: $(ref.instance-group-{{ env["MediakindOrganization"] }}.selfLink)
+    region: europe-west1-b
+
+resources:
+- name: 'percona-node3-{{ env["MediakindOrgAdmin"] }}'
+  type: compute.v1.regionInstanceGroupManager
+  properties:
+    baseInstanceName: percona-db-template-{{ env["MediakindOrganization"] }}
+    instanceTemplate: '$(ref.{{ env["development-mediakind"] }}-percona_cluster_schema.selfLink)'
+    targetSize: 2
+    region: europe-west1-b
+
+- name: 'autoscaler-{{ env["MediakindOrgAdmin"] }}'
+  type: compute.v1.regionAutoscalers
+  properties:
+    autoscalingPolicy:
+      coolDownPeriodSec: 50
+      loadBalancingUtilization:
+        utilizationTarget: 80
+      maxNumReplicas: 5
+      minNumReplicas: 3
+    target: $(ref.instance-group-{{ env["MediakindOrganization"] }}.selfLink)
+    region: europe-west1-b

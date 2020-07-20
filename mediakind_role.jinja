@@ -1,0 +1,48 @@
+#Create the mediakind-role
+ resources:
+- name:  MediakindOrganization
+  type: gcp-types/iam-v1:MediakindOrganization.admin
+  properties:
+    parent: projects/{{ env["MediakindOrganization"] }}
+    roleId: {{ properties["MediakindOrganization.admin"] }}
+    role:
+      title: {{ properties["admin"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}
+
+   resources:
+- name: MediakindOrgTeam
+  type: gcp-types/iam-v1:MediakindOrgTeam.mediakindorgAdmin
+  properties:
+    parent: projects/{{ env["MediakindOrgTeam"] }}
+    roleId: {{ properties["mediakindorgAdmin.admin"] }}
+    role:
+      title: {{ properties["admin"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}
+
+  resources:
+- name: MediakindNetworkTeam
+  type: gcp-types/iam-v1:MediakindNetworkTeam.mediakindnetworkAdmin
+  properties:
+    parent: projects/{{ env["MediakindNetworkTeam"] }}
+    roleId: {{ properties["mediakindnetworkAdmin.networkadmin"] }}
+    role:
+      title: {{ properties["admin"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}
+
+  resources:
+- name: MediakindAppTeam
+  type: gcp-types/iam-v1:MediakindAppTeam.mediakindappAdmin
+  properties:
+    parent: projects/{{ env["MediakindAppTeam"] }}
+    roleId: {{ properties["mediakindappAdmin.instanceAdmin.v1"] }}
+    role:
+      title: {{ properties["admin"] }}
+      description: {{ properties["description"] }}
+      stage: {{ properties["General Availability"] }}
+      includedPermissions: {{ properties["includedPermissions"] }}
