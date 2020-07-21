@@ -27,22 +27,6 @@ resources:
         items:
         - network-tags
         - https-server
-   
-    networkInterfaces:
-    - network: projects/mediakind/global/networks/mediakind-networks
-      subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
-    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b/subnetworks/mediakind-subnet
-      # Access Config required to give the instance a public IP address
-      accessConfigs:
-      - name: External NAT
-        type: ONE_TO_ONE_NAT
-        aliasIpRanges: []
-    labels: { environment: {{ env["MediakindProject"] }}, tenancy: "mediakind-subnet" }
-      scheduling:
-        preemptible: false
-        onHostMaintenance: MIGRATE
-        automaticRestart: true
-        nodeAffinities: []
 
     metadata:
       items:
