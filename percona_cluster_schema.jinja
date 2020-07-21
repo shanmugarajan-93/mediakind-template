@@ -20,27 +20,18 @@ resources:
   name: percona-XtraDB-template
   properties:
     zone: {{ properties["gcloud compute mediakindApps add-metadata \
-    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b"] }}
+    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=zone-b"] }}
     machineType: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/zones/{{ properties["gcloud compute mediakindApps add-metadata \
-    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b"] }}/machineTypes/n1-standard-1
+    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=zone-b"] }}/machineTypes/n1-standard-1
      tags:
         items:
         - network-tags
         - https-server
-    disks:
-    - deviceName: SSD-Provisioned Space
-      type: SSD
-      boot: true
-      mode: 'READ_WRITE'
-      autoDelete: true
-      initializeParams:
-        diskName: {{ Database-disk }}-disk
-        sourceImage: https://www.googleapis.com/compute/v1/mediakind/debian-cloud/global/images/family/debian-7
-         diskSizeGb: '500'
+   
     networkInterfaces:
     - network: projects/mediakind/global/networks/mediakind-network
       subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
-    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b/subnetworks/mediakind-subnet
+    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=zone-b/subnetworks/mediakind-subnet
       # Access Config required to give the instance a public IP address
       accessConfigs:
       - name: External NAT
@@ -88,61 +79,3 @@ resources:
       - https://www.googleapis.com/auth/servicecontrol
       - https://www.googleapis.com/auth/service.management.readonly
       - https://www.googleapis.com/auth/trace.append
-
-  - type: compute.v1.firewall
-  name: allow-http-pmm-server
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - tcp
-    allowed:
-    - IPProtocol: tcp
-      ports: 
-      - '80'
-    sourceRanges: 
-    - 198.164.54.35/26
-  name: default-allow-icmp
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - icmp
-    allowed:
-    - IPProtocol: icmp
-      ports: 
-      - '65534'
-    sourceRanges: 
-    - 194.162.82.65/24
-  name: default-allow-internal
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - ssh
-    allowed:
-    - IPProtocol: tcp,udp,icmp
-      ports: 
-      - '0-65535'
-    sourceRanges: 
-    - 192.161.78.48/26
-  name: default-allow-rdp
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - tcp
-    allowed:
-    - IPProtocol: tcp
-      ports: 
-      - '3389'
-    sourceRanges: 
-    - 192.164.86.68/20
-  name: default-allow-ssh
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - ssh
-    allowed:
-    - IPProtocol: tcp
-      ports: 
-      - '20-22'
-    sourceRanges: 
-    - 191.166.56.64/20
-
