@@ -25,27 +25,10 @@ resources:
     --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=zone-b"] }}/machineTypes/n1-standard-1
      tags:
         items:
+        - monitor-tags
         - network-tags
-        - https-server
    
-    networkInterfaces:
-    - network: projects/mediakind/global/networks/mediakind-network
-      subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
-    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=zone-b/subnetworks/mediakind-subnet
-      # Access Config required to give the instance a public IP address
-      accessConfigs:
-      - name: External NAT
-        type: ONE_TO_ONE_NAT
-        aliasIpRanges: []
-    labels: { environment: {{ env["MediakindProject"] }}, tenancy: "mediakind-subnet" }
-      scheduling:
-        preemptible: false
-        onHostMaintenance: MIGRATE
-        automaticRestart: true
-        nodeAffinities: []
-
-
-    metadata:
+        metadata:
       items:
       # For more ways to use startup scripts on an instance, see:
       #   https://cloud.google.com/compute/docs/startupscript
