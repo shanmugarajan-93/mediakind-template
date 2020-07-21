@@ -1,0 +1,11 @@
+
+ disks:
+    - deviceName: core-instance
+      type: SSD
+      boot: true
+      mode: 'READ_WRITE'
+      autoDelete: true
+      initializeParams:
+        diskName: {{ core-disk }}-disk
+        sourceImage: https://www.googleapis.com/compute/v1/mediakind/centos-cloud/global/images/family/centos7
+        diskSizeGb: '100'
