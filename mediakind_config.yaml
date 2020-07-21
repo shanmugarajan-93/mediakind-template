@@ -22,6 +22,14 @@ imports:
 - path: percona_cluster_disk.jinja
 imports:
 - path: firewall_rule.jinja
+imports:
+- path: network_core_vm_template.jinja
+imports:
+- path: network_percona_cluster.jinja
+imports:
+- path: subnet_core_vm_template.jinja
+imports:
+- path: subnet_percona_vm.jinja
 
 resources:
 # Create the auto-mode network
@@ -30,23 +38,27 @@ resources:
   properties:
     autoCreateSubnetworks: true
     
- # Create the moogsoft-core-instance-template instance
-- name: mediakind_core_vm_template
+ # Create the mediakind-core-instance-template instance
+- name: mk_lam_template
   type: mediakind_core_vm.jinja
   properties:
     zone: europe-west1-b
-    machineType: n1-highmem-2
-    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    subnetwork: regions/properties{["zone"]}/subnetworks/mediakind-networks
+    machineType: n1-standard-2
+    containerFamily:centos-cloud
+    containerImage:centos7
+    network: $(ref.mediakind-network.selfLink)
+    subnetwork: $(ref.mediakind-subnet.selfLink)  
 
 # Create the percona-cluster-db-moogsoft instance
-- name: percona-cluster-db
-  type: percona_cluster_db_schema.jinja
+- name: percona_cluster_template
+  type: percona_cluster_schema.jinja
   properties:
     zone: europe-west1-b
-    machineType: n1-standard-1
-    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks  
-    subnetwork: regions/properties{["zone"]}/subnetworks/mediakind-networks
+    machineType: n1-highmemory-2
+    containerFamily:debian-cloud
+    containerImage:debian7
+    network: $(ref.mediakind-network.selfLink)
+    subnetwork: $(ref.mediakind-subnet.selfLink)
 
 
 
