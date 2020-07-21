@@ -1,0 +1,24 @@
+resources:
+- name: {{ env["MediakindNetwork"] }}
+  type: compute.v1.network
+  properties:
+    routingConfig:
+      routingMode: REGIONAL
+    autoCreateSubnetworks: true
+
+ networkInterfaces:
+    - network: projects/mediakind/global/networks/mediakind-network
+      subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
+    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=properties{["zone"]}/subnetworks/mediakind-subnet
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+        aliasIpRanges: []
+    labels: { environment: {{ env["MediakindProject"] }}, tenancy: "mediakind-subnet" }
+      scheduling:
+        preemptible: false
+        onHostMaintenance: MIGRATE
+        automaticRestart: true
+        nodeAffinities: []
+  
