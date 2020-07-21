@@ -1,15 +1,15 @@
 # Create percona cluster instance group
 
 resources:
-- name: 'percona-node1-{{ env["MediakindOrganization"] }}'
+- name: 'percona-node1-{{ env["MediakindProject"] }}'
   type: compute.v1.regionInstanceGroupManager
   properties:
-    baseInstanceName: percona-db-template-{{ env["MediakindOrganization"] }}
-    instanceTemplate: '$(ref.{{ env["MediakindOrganization"] }}-percona_cluster_schema.selfLink)'
+    baseInstanceName: percona-db-template-{{ env["MediakindProject"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindProject"] }}-percona_cluster_schema.jinja)'
     targetSize: 2
-    region: europe-west1-b
+    region: properties{["zone"]}
 
-- name: 'autoscaler-{{ env["MediakindOrgAdmin"] }}'
+- name: 'autoscaler-{{ env["MediakindApp"] }}'
   type: compute.v1.regionAutoscalers
   properties:
     autoscalingPolicy:
@@ -18,19 +18,19 @@ resources:
         utilizationTarget: 80
       maxNumReplicas: 5
       minNumReplicas: 3
-    target: $(ref.instance-group-{{ env["MediakindOrganization"] }}.selfLink)
-    region: europe-west1-b
+    target: $(ref.instance-group-{{ env["MediakindProject"] }}.selfLink)
+    region: properties{["zone"]}
 
 resources:
-- name: 'percona-node2-{{ env["MediakindOrganization"] }}'
+- name: 'percona-node2-{{ env["MediakindProject"] }}'
   type: compute.v1.regionInstanceGroupManager
   properties:
-    baseInstanceName: percona-db-template-{{ env["MediakindOrganization"] }}
-    instanceTemplate: '$(ref.{{ env["MediakindOrganization"] }}-percona_cluster_schema.selfLink)'
+    baseInstanceName: percona-db-template-{{ env["MediakindProject"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindProject"] }}-percona_cluster_schema.jinja)'
     targetSize: 2
-    region: europe-west1-b
+    region: properties{["zone"]}
 
-- name: 'autoscaler-{{ env["MediakindOrgAdmin"] }}'
+- name: 'autoscaler-{{ env["MediakindApp"] }}'
   type: compute.v1.regionAutoscalers
   properties:
     autoscalingPolicy:
@@ -39,19 +39,19 @@ resources:
         utilizationTarget: 80
       maxNumReplicas: 5
       minNumReplicas: 3
-    target: $(ref.instance-group-{{ env["MediakindOrganization"] }}.selfLink)
-    region: europe-west1-b
+    target: $(ref.instance-group-{{ env["MediakindProject"] }}.selfLink)
+    region: properties{["zone"]}
 
 resources:
-- name: 'percona-node3-{{ env["MediakindOrgAdmin"] }}'
+- name: 'percona-node3-{{ env["MediakindProject"] }}'
   type: compute.v1.regionInstanceGroupManager
   properties:
-    baseInstanceName: percona-db-template-{{ env["MediakindOrganization"] }}
-    instanceTemplate: '$(ref.{{ env["development-mediakind"] }}-percona_cluster_schema.selfLink)'
+    baseInstanceName: percona-db-template-{{ env["MediakindApp"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindProject"] }}-percona_cluster_schema.jinja)'
     targetSize: 2
     region: europe-west1-b
 
-- name: 'autoscaler-{{ env["MediakindOrgAdmin"] }}'
+- name: 'autoscaler-{{ env["MediakindApp"] }}'
   type: compute.v1.regionAutoscalers
   properties:
     autoscalingPolicy:
@@ -60,5 +60,5 @@ resources:
         utilizationTarget: 80
       maxNumReplicas: 5
       minNumReplicas: 3
-    target: $(ref.instance-group-{{ env["MediakindOrganization"] }}.selfLink)
-    region: europe-west1-b
+    target: $(ref.instance-group-{{ env["MediakindProject"] }}.selfLink)
+    region: properties{["zone"]}
