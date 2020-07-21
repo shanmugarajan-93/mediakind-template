@@ -6,7 +6,7 @@ imports:
 - path: mediakind_role.jinja
 
 resources:
-- name: MediakindProjectTeam
+- name: MediakindProject
   type: mediakind_app_role.jinja
   properties:
     roleId: mediakindorgAdmin
@@ -15,16 +15,25 @@ resources:
     includedPermissions: All
 
 resources:
-- name: MediakindNetworkTeam
+- name: MediakindNetwork
   type: mediakind_app_role.jinja
   properties:
     roleId: mediakindnetworkAdmin
     title: mediakind network admin
     description: Full Permission.
     includedPermissions: All
+    
+esources:
+- name: MediakindAdmin
+  type: mediakind_app_role.jinja
+  properties:
+    roleId: mediakinduserAdmin
+    title: mediakind user admin
+    description: Full Permission.
+    includedPermissions: All
       
 resources:
-- name: MediakindAppTeam
+- name: MediakindApp
   type: mediakind_app_role.jinja
   properties:
     roleId: mediakindappAdmin
