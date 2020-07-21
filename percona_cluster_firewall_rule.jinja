@@ -1,0 +1,73 @@
+
+ networkInterfaces:
+    - network: projects/mediakind/global/networks/mediakind-network
+      subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
+    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b/subnetworks/mediakind-subnet
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+        aliasIpRanges: []
+    labels: { environment: {{ env["MediakindProject"] }}, tenancy: "mediakind-subnet" }
+      scheduling:
+        preemptible: false
+        onHostMaintenance: MIGRATE
+        automaticRestart: true
+        nodeAffinities: []
+
+- type: compute.v1.firewall
+  name: allow-http-pmm-server
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - tcp
+    allowed:
+    - IPProtocol: tcp
+      ports: 
+      - '80'
+    sourceRanges: 
+    - 198.164.54.35/26
+  name: default-allow-icmp
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - icmp
+    allowed:
+    - IPProtocol: icmp
+      ports: 
+      - '65534'
+    sourceRanges: 
+    - 194.162.82.65/24
+  name: default-allow-internal
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - ssh
+    allowed:
+    - IPProtocol: tcp,udp,icmp
+      ports: 
+      - '0-65535'
+    sourceRanges: 
+    - 192.161.78.48/26
+  name: default-allow-rdp
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - tcp
+    allowed:
+    - IPProtocol: tcp
+      ports: 
+      - '3389'
+    sourceRanges: 
+    - 192.164.86.68/20
+  name: default-allow-ssh
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    targetTags: 
+    - ssh
+    allowed:
+    - IPProtocol: tcp
+      ports: 
+      - '20-22'
+    sourceRanges: 
+    - 191.166.56.64/20
