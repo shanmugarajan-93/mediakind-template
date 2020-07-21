@@ -1,44 +1,44 @@
 #Create lam3 instance group
 
 resources:
-- name: 'lam3-group-{{ env["development-mediakind"] }}'
+- name: 'lam3-group-{{ env["MediakindProject"] }}'
   type: compute.v1.regionInstanceGroupManager
   properties:
-    baseInstanceName: core-vm-template-{{ env["development-mediakind"] }}
-    instanceTemplate: '$(ref.{{ env["development-mediakind"] }}-mediakind_core_vm.selfLink)'
+    baseInstanceName: core-vm-template-{{ env["MediakindProject"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindProject"] }}-mediakind_core_vm.jinja)'
     targetSize: 1
-    region: europe-west1-d
+    region: properties{["zone"]}
 
-- name: 'autoscaler-{{ env["development-mediakind"] }}'
+- name: 'autoscaler-{{ env["MediakindProject"] }}'
   type: compute.v1.regionAutoscalers
   properties:
     autoscalingPolicy:
       coolDownPeriodSec: 60
       loadBalancingUtilization:
         utilizationTarget: 50
-      maxNumReplicas: 3
-      minNumReplicas: 2
-    target: $(ref.instance-group-{{ env["development-mediakind"] }}.selfLink)
-    region: europe-west1-d
+      maxNumReplicas: 5
+      minNumReplicas: 3
+    target: $(ref.instance-group-{{ env["MediakindProject"] }}.mediakind_core_vm.jinja)
+    region: properties{["zone"]}
     
 #Create lam4 instance group
 resources:
-- name: 'lam4-group-{{ env["development-mediakind"] }}'
+- name: 'lam4-group-{{ env["MediakindProject"] }}'
   type: compute.v1.regionInstanceGroupManager
   properties:
-    baseInstanceName: core-vm-template-{{ env["development-mediakind"] }}
-    instanceTemplate: '$(ref.{{ env["development-mediakind"] }}-mediakind_core_vm.selfLink)'
-    targetSize: 1
-    region: europe-west1-d
+    baseInstanceName: core-vm-template-{{ env["MediakindProject"] }}
+    instanceTemplate: '$(ref.{{ env["MediakindProject"] }}-mediakind_core_vm.jinja)'
+    targetSize: 2
+   region: properties{["zone"]}
 
-- name: 'autoscaler-{{ env["development-mediakind"] }}'
+- name: 'autoscaler-{{ env["MediakindProject"] }}'
   type: compute.v1.regionAutoscalers
   properties:
     autoscalingPolicy:
       coolDownPeriodSec: 60
       loadBalancingUtilization:
         utilizationTarget: 50
-      maxNumReplicas: 3
-      minNumReplicas: 2
-    target: $(ref.instance-group-{{ env["development-mediakind"] }}.selfLink)
-    region: europe-west1-d
+      maxNumReplicas: 5
+      minNumReplicas: 3
+    target: $(ref.instance-group-{{ env["MediakindProject"] }}.selfLink)
+    region: properties{["zone"]}
