@@ -20,26 +20,16 @@ resources:
   name: core-vm-template
   properties:
     zone: {{ properties["gcloud compute mediakind add-metadata \
-    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b"] }}
+    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=global"] }}
     machineType: https://www.googleapis.com/compute/v1/mediakind/{{ env["development-mediakind"] }}/zones/{{ properties["properties["gcloud compute mediakind add-metadata \
-    --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b"]"] }}/machineTypes/n1-highmem-2
+    --metadata google-compute-default-region=properties{["zone"]},google-compute-default-zone=properties{["zone"]}"]"] }}/machineTypes/n1-highmem-2
     tags:
         items:
         - network-tags
         - https-server
-    disks:
-    - deviceName: Core-instance
-      type: SSD
-      boot: true
-      mode: 'READ_WRITE'
-      autoDelete: true
-      initializeParams:
-        diskName: {{ Core-disk }}-disk
-        sourceImage: https://www.googleapis.com/compute/v1/mediakind/centos-cloud/global/images/family/centos7
-        diskSizeGb: '100'
-
+   
     networkInterfaces:
-    - network: projects/mediakind/global/networks/vpc-fwp-development
+    - network: projects/mediakind/global/networks/mediakind-networks
       subnetwork: projects/mediakind/regions/gcloud compute mediakind add-metadata \
     --metadata google-compute-default-region=europe-west1,google-compute-default-zone=europe-west1-b/subnetworks/mediakind-subnet
       # Access Config required to give the instance a public IP address
@@ -47,7 +37,7 @@ resources:
       - name: External NAT
         type: ONE_TO_ONE_NAT
         aliasIpRanges: []
-    labels: { environment: {{ env["MediakindOrganization"] }}, tenancy: "mediakind-subnet" }
+    labels: { environment: {{ env["MediakindProject"] }}, tenancy: "mediakind-subnet" }
       scheduling:
         preemptible: false
         onHostMaintenance: MIGRATE
@@ -81,41 +71,3 @@ EOF
       - https://www.googleapis.com/auth/servicecontrol
       - https://www.googleapis.com/auth/service.management.readonly
       - https://www.googleapis.com/auth/trace.append
-
-  - type: compute.v1.firewall
-  name: default-allow-http
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - http
-    allowed:
-    - IPProtocol: https
-      ports: 
-      - '80'
-    sourceRanges: 
-    - 191.154.121.40/20
-  name: default-allow-tcp
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - tcp
-    allowed:
-    - IPProtocol: tcp
-      ports: 
-      - '80'
-    sourceRanges: 
-    - 196.168.10.52/24
-  name: default-allow-ssh
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    targetTags: 
-    - ssh
-    allowed:
-    - IPProtocol: tcp
-      ports: 
-      - '20-22'
-    sourceRanges: 
-    - 192.161.10.42/20
-
-
-  
