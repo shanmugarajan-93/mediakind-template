@@ -16,6 +16,12 @@ imports:
 - path: db_instance_group.jinja
 imports:
 - path: core_instance_group.jinja
+imports:
+- path: core_vm_disk.jinja
+imports:
+- path: percona_cluster_disk.jinja
+imports:
+- path: firewall_rule.jinja
 
 resources:
 # Create the auto-mode network
