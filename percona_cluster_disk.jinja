@@ -1,0 +1,11 @@
+
+ disks:
+    - deviceName: SSD-Provisioned Space
+      type: SSD
+      boot: true
+      mode: 'READ_WRITE'
+      autoDelete: true
+      initializeParams:
+        diskName: {{ Database-disk }}-disk
+        sourceImage: https://www.googleapis.com/compute/v1/mediakind/debian-cloud/global/images/family/debian-7
+         diskSizeGb: '500'
