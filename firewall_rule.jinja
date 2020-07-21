@@ -1,0 +1,28 @@
+# Create the firewall rule
+- name: default-allow-http
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    sourceRanges: ["192.168.1.2/20"]
+    allowed:
+    - IPProtocol: https
+      ports: [80]
+    - IPProtocol: https
+- name: default-allow-tcp
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    sourceRanges: ["194.164.6.2/24"]
+    allowed:
+    - IPProtocol: tcp
+      ports: [20]
+    - IPProtocol: tcp
+- name: default-allow-ssh
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    sourceRanges: ["198.169.6.2/28"]
+    allowed:
+    - IPProtocol: tcp
+      ports: [20-22]
+    - IPProtocol: tcp
