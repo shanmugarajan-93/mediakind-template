@@ -3,63 +3,44 @@ imports:
 imports:
 - path: percona-cluster_schema.jinja
 imports:
-- path: mediakind_role.yml
+- path: mediakind_role.jinja
+imports:
+- path: mediakind_app_role.jinja
 imports:
 - path: service_account.jinja
+imports:
+- path: core_vm_firewall_rule.jinja
+imports:
+- path: percona_cluster_firewall_rule.jinja
+imports:
+- path: db_instance_group.jinja
+imports:
+- path: core_instance_group.jinja
 
 resources:
 # Create the auto-mode network
-- name: mkgcpnetworks
+- name: mediakind-networks
   type: compute.v1.network
   properties:
     autoCreateSubnetworks: true
-
-# Create the firewall rule
-- name: default-allow-http
-  type: compute.v1.firewall
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    sourceRanges: ["0.0.0.0/0"]
-    allowed:
-    - IPProtocol: https
-      ports: [80]
-    - IPProtocol: https
-- name: default-allow-tcp
-  type: compute.v1.firewall
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    sourceRanges: ["0.0.0.0/0"]
-    allowed:
-    - IPProtocol: tcp
-      ports: [20]
-    - IPProtocol: tcp
-- name: default-allow-ssh
-  type: compute.v1.firewall
-  properties:
-    network: https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
-    sourceRanges: ["0.0.0.0/0"]
-    allowed:
-    - IPProtocol: tcp
-      ports: [20-22]
-    - IPProtocol: tcp
-
+    
  # Create the moogsoft-core-instance-template instance
 - name: mediakind_core_vm_template
   type: mediakind_core_vm.jinja
   properties:
-    zone: europe-west1-d
+    zone: europe-west1-b
     machineType: n1-highmem-2
-    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["development-mkgcp"] }}/global/networks/mediakind-networks
-    subnetwork: regions/europe-west-1/subnetworks/mediakind-networks
+    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks
+    subnetwork: regions/properties{["zone"]}/subnetworks/mediakind-networks
 
 # Create the percona-cluster-db-moogsoft instance
-- name: percona-cluster-db-moogsoft
-  type: percona-cluster-db-schema.jinja
+- name: percona-cluster-db
+  type: percona_cluster_db_schema.jinja
   properties:
-    zone: europe-west1-d
+    zone: europe-west1-b
     machineType: n1-standard-1
-    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["development-mkgcp"] }}/global/networks/mediakind-networks  
-    subnetwork: regions/europe-west1/subnetworks/mediakind-networks
+    network:  https://www.googleapis.com/compute/v1/mediakind/{{ env["MediakindProject"] }}/global/networks/mediakind-networks  
+    subnetwork: regions/properties{["zone"]}/subnetworks/mediakind-networks
 
 
 
